@@ -1,3 +1,1 @@
-# jstsp
-# jstsp
-# fixpoint_sat
+## SAT solver
