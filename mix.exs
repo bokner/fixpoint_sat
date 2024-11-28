@@ -24,7 +24,7 @@ defmodule FixpointSat.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:fixpoint, ">= 0.9.0"},
+      {:fixpoint, github: "bokner/fixpoint"},
       {:ex_doc, ">= 0.0.0", only: :dev, runtime: false}
     ]
   end
