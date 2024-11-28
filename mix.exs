@@ -4,10 +4,13 @@ defmodule FixpointSat.MixProject do
   def project do
     [
       app: :fixpoint_sat,
-      version: "0.1.0",
+      version: "0.1.1",
       elixir: "~> 1.16",
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+      docs: docs(),
+      description: description(),
+      package: package()
     ]
   end
 
@@ -21,7 +24,45 @@ defmodule FixpointSat.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:fixpoint, ">= 0.8.0"}
+      {:fixpoint, ">= 0.9.0"},
+      {:ex_doc, ">= 0.0.0", only: :dev, runtime: false}
     ]
   end
+
+  defp description() do
+    "SAT Solver"
+  end
+
+  defp docs() do
+    [
+      main: "readme",
+      formatter_opts: [gfm: true],
+      extras: [
+        "README.md"
+      ]
+    ]
+  end
+
+  defp package() do
+    [
+      # This option is only needed when you don't want to use the OTP application name
+      name: "fixpoint_sat",
+      # These are the default files included in the package
+      files: ~w(lib test data .formatter.exs mix.exs README* LICENSE*
+                ),
+      exclude_patterns: ["misc/**", "scripts/**", "**/._exs"],
+      licenses: licenses(),
+      links: links(),
+      description: description()
+    ]
+  end
+
+  defp licenses() do
+    ["MIT"]
+  end
+
+  defp links() do
+    %{"GitHub" => "https://github.com/bokner/fixpoint_sat"}
+  end
+
 end
