@@ -5,10 +5,16 @@ defmodule CPSolver.SatSolver.VariableSelector.DLIS do
   For a given variable x:
   – C(x,p) – # of unresolved clauses in which x appears positively
   – C(x,n) - # of unresolved clauses in which x appears negatively
-  – Let x be the literal for which Cx,p is maximal
-  – Let y be the literal for which Cy,n is maximal
-  – If Cx,p > Cy,n choose x and assign it TRUE
+  – Let x be the literal for which C(x,p) is maximal
+  – Let y be the literal for which C(y,n) is maximal
+  – If C(x,p) > C(y,n) choose x and assign it TRUE
   – Otherwise choose y and assign it FALSE
+
+  Note: this is equivalent to generic MostConstrained variable selector,
+  except for the cases with both positive and negative literals for the same variable
+  are in the same clause.
+  These could be just filtered out on CNF preprocessing.
+  So DLIS selector is here only to serve as a template for other variable selectors.
   """
   use CPSolver.Search.VariableSelector
   alias CPSolver.Propagator.ConstraintGraph
@@ -39,13 +45,13 @@ defmodule CPSolver.SatSolver.VariableSelector.DLIS do
             updated_acc
           end)
     end)
-    |> Enum.flat_map(fn {{var, _sign}, count} -> Interface.fixed?(var) && [] || [{var, count}] end)
+    |> Enum.to_list()
     |> Utils.maximals(
-      fn {_var, count} ->
+      fn {{_var, _sign}, count} ->
         count
       end
     )
-    |> Enum.map(fn {var, _count} ->
+    |> Enum.map(fn {{var, _sign}, _count} ->
       var end)
   end
 
