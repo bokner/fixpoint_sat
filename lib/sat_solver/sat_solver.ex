@@ -1,9 +1,9 @@
-defmodule CPSolver.SatSolver do
+defmodule Fixpoint.SatSolver do
   alias CPSolver.Constraint.Or
   alias CPSolver.Model
   alias CPSolver.BooleanVariable
   alias CPSolver.Variable.Interface
-  alias CPSolver.Search.VariableSelector, as: Strategy
+  import CPSolver.Search.VariableSelector
   import CPSolver.Variable.View.Factory
 
   require Logger
@@ -32,13 +32,7 @@ defmodule CPSolver.SatSolver do
     default_opts =
       [
         search: {
-          # :most_completed,
-          # Strategy.most_completed(&Enum.random/1),
-          Strategy.mixed([
-            Strategy.most_completed(Strategy.chb(:chb_size_min, &Enum.random/1) ),
-            #Strategy.afc({:afc_size_min, 0.9}, Strategy.first_fail(&Enum.random/1)),
-            Strategy.chb(:chb_size_min, Strategy.most_completed(&Enum.random/1)),
-          ]),
+          default_variable_selector(),
           :indomain_max
         },
         stop_on: {:max_solutions, 1}
@@ -61,6 +55,25 @@ defmodule CPSolver.SatSolver do
         List.first(res.solutions) |> sort_by_variables(res.variables)
     end
     |> tap(fn _ -> Logger.notice(inspect(res, pretty: true)) end)
+  end
+
+
+  defp default_variable_selector() do
+    # The selection of variable is a heuristic that
+    # chooses a variable (associated with literal) from not yet resolved variables.
+    # This variable will then be fixed (either to TRUE or FALSE)
+    # in every clause that the corresponding literal is part of.
+    # The heuristic is either a standard one (provided by Fixpoint),
+    # or it could be built (example: Fixpoint.SatSolver.VariableSelector.DLIS)
+    mixed([
+      most_completed(chb(:chb_min, &Enum.random/1)),
+      #chb(:chb_min, most_completed(&Enum.random/1)),
+      #most_completed(afc({:afc_min, 0.8}, &Enum.random/1)),
+      #most_completed(afc({:afc_max, 0.75}, &Enum.random/1)),
+      #most_completed(action({:action_max, 0.9}, &Enum.random/1)),
+      #afc({:afc_max, 0.5}, &Enum.random/1),
+      #afc({:afc_max, 0.5}, &Enum.random/1),
+    ])
   end
 
   def model(dimacs_instance) when is_atom(dimacs_instance) do

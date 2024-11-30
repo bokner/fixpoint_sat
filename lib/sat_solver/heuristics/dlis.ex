@@ -1,4 +1,4 @@
-defmodule CPSolver.SatSolver.VariableSelector.DLIS do
+defmodule Fixpoint.SatSolver.VariableSelector.DLIS do
   @moduledoc """
   Dynamic Largest Individual Sum.
 

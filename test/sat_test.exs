@@ -1,4 +1,4 @@
-defmodule CPSolverTest.Examples.SatSolver do
+defmodule SatSolverTest.Examples do
   @moduledoc """
 
   Most test cases are borrowed from:
@@ -8,9 +8,8 @@ defmodule CPSolverTest.Examples.SatSolver do
 
   use ExUnit.Case
 
-  alias CPSolver.SatSolver
-  alias CPSolver.Search.VariableSelector, as: Strategy
-
+  alias Fixpoint.SatSolver
+  
   test "simple unsatisfiable" do
     assert_unsatisfiable([[1], [-1]])
   end
@@ -70,20 +69,19 @@ defmodule CPSolverTest.Examples.SatSolver do
     assert_unsatisfiable(:unsat100_430)
   end
 
-  @tag :superslow
-  test "Dimacs (sat/unsat, 150 vars, 645 clauses)" do
+
+  test "Dimacs (sat, 150 vars, 645 clauses)" do
     assert_satisfiable(:sat150_645)
+  end
+
+  @tag :superslow
+  test "Dimacs (unsat, 150 vars, 645 clauses)" do
     assert_unsatisfiable(:unsat150_645)
   end
 
   defp assert_satisfiable(clauses) do
     solution =
-      SatSolver.solve(clauses,
-        search: {
-          Strategy.chb(:chb_size_min, Strategy.most_completed(&Enum.random/1)),
-          :indomain_max
-        }
-      )
+      SatSolver.solve(clauses, timeout: :timer.minutes(1))
 
     assert SatSolver.check_solution(solution, clauses)
   end
@@ -91,18 +89,7 @@ defmodule CPSolverTest.Examples.SatSolver do
   defp assert_unsatisfiable(clauses) do
     assert :unsatisfiable ==
              SatSolver.solve(clauses,
-               timeout: :timer.minutes(1),
-               search: {
-                 Strategy.mixed([
-                   # &Enum.random/1,
-                   # :dom_deg,
-                   Strategy.chb(
-                     :chb_size_min,
-                     Strategy.most_completed(Strategy.most_constrained())
-                   )
-                 ]),
-                 :indomain_max
-               }
+               timeout: :timer.minutes(1)
              )
   end
 end
