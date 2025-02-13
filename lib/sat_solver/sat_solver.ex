@@ -34,7 +34,7 @@ defmodule Fixpoint.SatSolver do
       [
         search: {
           default_variable_selector(),
-          :indomain_random
+          :indomain_min
         },
         stop_on: {:max_solutions, 1}
       ]
@@ -77,7 +77,6 @@ end
       #most_completed(afc({:afc_min, 0.8}, &Enum.random/1)),
       #most_completed(afc({:afc_max, 0.75}, &Enum.random/1)),
       #most_completed(action({:action_max, 0.9}, &Enum.random/1)),
-      #afc({:afc_max, 0.5}, &Enum.random/1),
       #afc({:afc_max, 0.5}, &Enum.random/1),
     ])
   end
