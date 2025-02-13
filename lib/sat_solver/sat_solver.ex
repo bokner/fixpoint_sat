@@ -27,13 +27,14 @@ defmodule Fixpoint.SatSolver do
   """
   def solve(clauses, opts \\ []) do
     Keyword.get(opts, :print) && Logger.configure(level: :notice)
-    model = model(clauses)
+    try do
+      model = model(clauses)
 
     default_opts =
       [
         search: {
           default_variable_selector(),
-          :indomain_max
+          :indomain_random
         },
         stop_on: {:max_solutions, 1}
       ]
@@ -54,8 +55,13 @@ defmodule Fixpoint.SatSolver do
       true ->
         List.first(res.solutions) |> sort_by_variables(res.variables)
     end
-    |> tap(fn _ -> Logger.notice(inspect(res, pretty: true)) end)
+
+  catch {:fail, _ref} ->
+    :unsatisfiable
   end
+  |> tap(fn res -> Logger.notice(inspect(res, pretty: true)) end)
+
+end
 
 
   defp default_variable_selector() do
@@ -67,7 +73,7 @@ defmodule Fixpoint.SatSolver do
     # or it could be built (example: Fixpoint.SatSolver.VariableSelector.DLIS)
     mixed([
       most_completed(chb(:chb_min, &Enum.random/1)),
-      #chb(:chb_min, most_completed(&Enum.random/1)),
+      chb(:chb_min, most_completed(&Enum.random/1)),
       #most_completed(afc({:afc_min, 0.8}, &Enum.random/1)),
       #most_completed(afc({:afc_max, 0.75}, &Enum.random/1)),
       #most_completed(action({:action_max, 0.9}, &Enum.random/1)),
