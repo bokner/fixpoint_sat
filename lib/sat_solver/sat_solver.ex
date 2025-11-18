@@ -34,7 +34,7 @@ defmodule Fixpoint.SatSolver do
       [
         search: {
           default_variable_selector(),
-          :indomain_min
+          :indomain_random
         },
         stop_on: {:max_solutions, 1}
       ]
