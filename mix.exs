@@ -4,7 +4,7 @@ defmodule FixpointSat.MixProject do
   def project do
     [
       app: :fixpoint_sat,
-      version: "0.1.4",
+      version: "0.1.5",
       elixir: "~> 1.16",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
@@ -24,7 +24,7 @@ defmodule FixpointSat.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:fixpoint, ">= 0.10.0"},
+      {:fixpoint, "~> 0.15"},
       {:picosat_elixir, "~> 0.2.3", only: :dev},
       {:ex_doc, ">= 0.0.0", only: :dev, runtime: false},
       {:replbug, "~> 1.0.2", only: :dev}
