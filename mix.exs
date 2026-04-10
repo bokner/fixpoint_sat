@@ -5,7 +5,7 @@ defmodule FixpointSat.MixProject do
     [
       app: :fixpoint_sat,
       version: "0.1.5",
-      elixir: "~> 1.16",
+      elixir: "~> 1.18",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       docs: docs(),
